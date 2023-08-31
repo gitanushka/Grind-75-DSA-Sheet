@@ -1,30 +1,33 @@
 class Solution {
 public:
     int trap(vector<int>& height) {
-        //visulaize it with building nd follow the process
+        //optimal solution using two pointer approach
         int size = height.size();
-        int mxl[size],mxr[size];
-        
-        mxl[0] = height[0];
-        //left se chalu krt hue max left nikalenge har index ke liye taaki hame max building milti rhe
-        for(int i=1;i<size;i++){
-            mxl[i] = max(mxl[i-1],height[i]);
+        //left or right 2 pointer rakh liye 
+        int l = 0, r = size - 1;
+        //max building jo left me aayegi or max building jo right me aaye
+        int leftmax = 0, rightmax = 0;
+        //resultant water jo chahiye hame
+        int res = 0;
+        //jb tk left pointer ka index chota ya barabar h right pointr ke index se
+        while(l<=r){
+            //agr meri height jo left pe aarui hai vo choti hai right ke
+            if(height[l]<=height[r]){
+                //or agr meri building badi h leftmax se to leftmax ko update krdo
+                if(height[l]>leftmax) leftmax = height[l];
+                //agr nhi h iska mtlb ki left max se choti h to udhr water store hua hai to kitna hua h hamari jo max left building hai minus meri jo current building h vo
+                else res += leftmax - height[l];
+            l++;    
+            }
+            //else mtlb jo right me building h vo choti h left ki building se
+            else{
+                //agr right meri jo current building h vo badi h rightmax se to rightmax ko update krdo
+                if(height[r]>rightmax) rightmax = height[r];
+                //badi nhi h mtlb water store ho skta h to add up krlo 
+                else res += rightmax - height[r];
+            r--;    
+            }
         }
-        //right se chalu krte hue right max update krt rhenge 
-        mxr[size-1] = height[size-1];
-        for(int i = size-2;i>=0;i--){
-            mxr[i] = max(mxr[i+1],height[i]);
-        }
-        // water kitna rhega? hamara jo max l or r aaye h unka min or minus krdenge us particular building ki height se utna hi store hoga
-        int water[size];
-        for(int i = 0; i<size ;i++){
-            water[i] = min(mxl[i],mxr[i]) - height[i];
-        }
-        //sare water ka sum kr denge
-        int sum = 0;
-        for(int i=0 ;i<size ;i++){
-            sum += water[i];
-        }
-        return sum;
+        return res;
     }
 };
